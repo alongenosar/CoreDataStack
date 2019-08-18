@@ -84,7 +84,9 @@ public class FetchedResultsTableSection: NSObject, TableSection, NSFetchedResult
         switch type {
         case .insert:
         table?.insertRows(at: [nip], with: .automatic)
-        table?.reloadRows(at: [nip], with: .fade)
+        if objectCount > 1 {
+            table?.reloadRows(at: [nip], with: .fade)
+        }
         break
         case .delete: table?.deleteRows(at: [ip], with: .automatic)
         case .update: table?.reloadRows(at: [ip], with: .none)
