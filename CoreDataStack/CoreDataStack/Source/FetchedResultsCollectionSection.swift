@@ -56,21 +56,23 @@ public class FetchedResultsCollectionSection: NSObject, NSFetchedResultsControll
     public func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         changes = Array()
     }
-
+    
     public func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        collection?.performBatchUpdates({
-            for (_, indexPath, type, newIndexPath) in changes {
-                let ip = IndexPath(row: indexPath?.row ?? 0, section: section)
-                let nip = IndexPath(row: newIndexPath?.row ?? 0, section: section)
+        DispatchQueue.main.async {
+            self.collection?.performBatchUpdates({
+                for (_, indexPath, type, newIndexPath) in self.changes {
+                    let ip = IndexPath(row: indexPath?.row ?? 0, section: self.section)
+                    let nip = IndexPath(row: newIndexPath?.row ?? 0, section: self.section)
 
-                switch type {
-                case .insert: collection?.insertItems(at: [nip])
-                case .delete: collection?.deleteItems(at: [ip])
-                case .update: collection?.reloadItems(at: [ip])
-                case .move: collection?.moveItem(at: ip, to: nip)
+                    switch type {
+                    case .insert: self.collection?.insertItems(at: [nip])
+                    case .delete: self.collection?.deleteItems(at: [ip])
+                    case .update: self.collection?.reloadItems(at: [ip])
+                    case .move: self.collection?.moveItem(at: ip, to: nip)
+                    }
                 }
-            }
-        }, completion: nil)
+            }, completion: nil)
+        }
     }
 
     public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
